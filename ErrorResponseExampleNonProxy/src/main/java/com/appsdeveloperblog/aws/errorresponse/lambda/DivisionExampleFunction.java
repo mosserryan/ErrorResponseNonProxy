@@ -9,19 +9,24 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 /**
  * Handler for requests to Lambda function.
  */
-public class DivisionExampleFunction implements RequestHandler<Map<String, Integer>, Map<String, Integer>> {
+public class DivisionExampleFunction implements RequestHandler<Map<String, String>, Map<String, Integer>> {
 
-    public Map<String, Integer> handleRequest(final Map<String, Integer> input, final Context context) {
+    public Map<String, Integer> handleRequest(final Map<String, String> input, final Context context) {
 
         Map<String, Integer> response = new HashMap<>();
 
-        int dividend = input.get("dividend");
-        int divisor = input.get("divisor");
-        int result = (int) dividend / divisor;
+        try {
+            int dividend = Integer.parseInt(input.get("dividend"));
+            int divisor = Integer.parseInt(input.get("divisor"));
+            int result = dividend / divisor;
 
-        response.put("dividend", dividend);
-        response.put("divisor", dividend);
-        response.put("result", result);
+            response.put("dividend", dividend);
+            response.put("divisor", dividend);
+            response.put("result", result);
+        } catch (Exception exception) {
+            throw new ExampleException("Example Exception: " + exception.getMessage(), exception.getCause());
+        }
+
 
         return response;
     }
